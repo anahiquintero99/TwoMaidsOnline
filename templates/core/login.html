@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %} {% block title %}Iniciar Sesión - {{ block.super
+}}{% endblock %} {% block description %}Inicia sesión en tu cuenta para acceder
+a todas las funcionalidades{% endblock %} {% block body_class
+%}bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen{% endblock
+%} {% block main_class %}flex items-center justify-center min-h-screen py-12
+px-4 sm:px-6 lg:px-8{% endblock %} {% block content %}
+<div class="w-full max-w-md space-y-8">
+  <!-- Incluir el organismo del formulario de login -->
+  {% include 'components/organisms/login_form.html' with form=form %}
+
+  <!-- Información adicional -->
+  <div class="text-center mt-8">
+    <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+      <h3 class="text-sm font-medium text-blue-800 mb-2">
+        Demo de la Aplicación
+      </h3>
+      <p class="text-xs text-blue-600">
+        Esta es una demostración de la arquitectura atómica con Django.<br />
+        <strong>Usuario:</strong> admin | <strong>Contraseña:</strong> admin123
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_css %}
+<style>
+  /* Animaciones personalizadas */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  /* Efecto de glassmorphism para el card */
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+  }
+</style>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Aplicar animación al cargar
+    const formContainer = document.querySelector(".max-w-md");
+    if (formContainer) {
+      formContainer.classList.add("animate-fade-in-up");
+    }
+
+    // Focus automático en el primer campo
+    const firstInput = document.querySelector(
+      'input[type="text"], input[type="email"]'
+    );
+    if (firstInput) {
+      firstInput.focus();
+    }
+
+    // Mejorar UX del formulario
+    const form = document.querySelector("form");
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener("submit", function (e) {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Iniciando sesión...
+                `;
+      }
+    });
+  });
+</script>
+{% endblock %}

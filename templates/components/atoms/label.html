@@ -1,0 +1,20 @@
+{% comment %} Átomo: Label Uso: {% include 'components/atoms/label.html' with
+text="Usuario" for="id_username" required=True %} Parámetros: - text: Texto de
+la etiqueta (requerido) - for: ID del campo relacionado (opcional) - required:
+true|false (default: false) - class: clases CSS adicionales (opcional) {%
+endcomment %}
+
+<label
+  {%
+  if
+  for
+  %}for="{{ for }}"
+  {%
+  endif
+  %}
+  class="block text-sm font-medium text-gray-700 mb-2 {{ class }}"
+>
+  {{ text }} {% if required %}
+  <span class="text-red-500 ml-1">*</span>
+  {% endif %}
+</label>

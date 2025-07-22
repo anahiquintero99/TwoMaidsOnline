@@ -1,0 +1,21 @@
+{% comment %} Molécula: Form Field Combina: Label + Input + Validación Uso: {%
+include 'components/molecules/form_field.html' with field=form.username
+label="Usuario" icon="user" required=True %} Parámetros: - field: Campo del
+formulario de Django (requerido) - label: Texto de la etiqueta (requerido) -
+icon: nombre del icono (opcional) - required: true|false (default: false) -
+help_text: Texto de ayuda (opcional) - class: clases CSS adicionales para el
+contenedor (opcional) {% endcomment %}
+
+<div class="space-y-2 {{ class }}">
+  <!-- Label -->
+  {% include 'components/atoms/label.html' with text=label
+  for=field.id_for_label required=required %}
+
+  <!-- Input -->
+  {% include 'components/atoms/input.html' with field=field icon=icon %}
+
+  <!-- Help text -->
+  {% if help_text %}
+  <p class="text-sm text-gray-600">{{ help_text }}</p>
+  {% endif %}
+</div>

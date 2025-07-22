@@ -1,0 +1,60 @@
+{% comment %} Organismo: Header Navegación principal de la aplicación {%
+endcomment %}
+
+<header class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a
+          href="{% url 'core:dashboard' %}"
+          class="flex items-center space-x-2"
+        >
+          <div
+            class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"
+          >
+            <span class="text-white font-bold text-sm">A</span>
+          </div>
+          <span class="font-semibold text-gray-900 text-lg">AtomicApp</span>
+        </a>
+      </div>
+
+      <!-- Navegación -->
+      <nav class="hidden md:flex space-x-8">
+        <a
+          href="{% url 'core:dashboard' %}"
+          class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+        >
+          Dashboard
+        </a>
+        <a
+          href="#"
+          class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+        >
+          Perfil
+        </a>
+        <a
+          href="#"
+          class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+        >
+          Configuración
+        </a>
+      </nav>
+
+      <!-- Usuario -->
+      {% if user.is_authenticated %}
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-700"
+          >Hola, {{ user.get_full_name|default:user.username }}</span
+        >
+        <a
+          href="{% url 'core:logout' %}"
+          class="text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors duration-200"
+        >
+          Cerrar Sesión
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</header>
