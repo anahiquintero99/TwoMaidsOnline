@@ -3,7 +3,9 @@ version: "3.8"
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "PYTHONPATH=/app python manage.py collectstatic --noinput &&
+             PYTHONPATH=/app gunicorn atomic_project.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
