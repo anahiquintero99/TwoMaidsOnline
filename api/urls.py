@@ -14,4 +14,5 @@ urlpatterns = [
 
     path('appointments/', IndexView.as_view(), name='appointment-index'),
     path('appointments/create/', CreateView.as_view(), name='appointment-create'),
+
 ]
