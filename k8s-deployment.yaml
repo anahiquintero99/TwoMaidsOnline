@@ -1,15 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twomaidsonline-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: twomaidsonline
+  template:
+    metadata:
+      labels:
+        app: twomaidsonline
+    spec:
       containers:
-      - name: web
-        image: twomaidsonline
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DEBUG
-          value: "1"
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"
+        - name: web
+          image: twomaidsonline
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "1"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twomaidsonline-service
+spec:
+  selector:
+    app: twomaidsonline
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: LoadBalancer
