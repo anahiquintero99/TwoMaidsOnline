@@ -42,13 +42,6 @@ services:
     # ports:
     #   - "6379:6379"
 
-volumes:
-  static_volume:
-  postgres_data:
-
-services:
-  # ... otros servicios ...
-
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
@@ -62,6 +55,8 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
 
 volumes:
+  static_volume:
+  postgres_data:
   sonarqube_data:
   sonarqube_logs:
   sonarqube_extensions:
