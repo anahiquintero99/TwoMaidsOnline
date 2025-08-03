@@ -14,11 +14,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      sonarqube:
+        condition: service_healthy
     environment:
-      - DEBUG=1
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/twomaidsonline
-      - REDIS_URL=redis://redis:6379
-      - SONAR_TOKEN=${SONAR_TOKEN}
+      DEBUG: ${DEBUG}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      SONAR_TOKEN: ${SONAR_TOKEN}
     env_file:
       - .env
 
@@ -27,7 +29,7 @@ services:
     environment:
       POSTGRES_DB: twomaidsonline
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -40,24 +42,51 @@ services:
 
   redis:
     image: redis:5.0.7
-    # ports:
-    #   - "6379:6379"
+    # Puerto no mapeado al host, uso interno solamente
+
+  sonar_db:
+    image: postgres:15
+    container_name: sonar_db
+    environment:
+      POSTGRES_DB: sonarqube
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - sonar_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
-    environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    depends_on:
+      sonar_db:
+        condition: service_healthy
     ports:
       - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_JDBC_URL=jdbc:postgresql://sonar_db:5432/sonarqube
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_logs:/opt/sonarqube/logs
       - sonarqube_extensions:/opt/sonarqube/extensions
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9000/api/system/health | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
 
 volumes:
   static_volume:
   postgres_data:
+  sonar_postgres_data:
   sonarqube_data:
   sonarqube_logs:
   sonarqube_extensions:

@@ -1,22 +1,26 @@
+# Imagen base liviana con Python 3.11
 FROM python:3.11-slim
 
-# Evita archivos .pyc y hace flush automático del output
+# Configura entorno para mejor rendimiento y logs claros
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Establece directorio de trabajo
 WORKDIR /app
 
-# Instala herramientas necesarias y sonar-scanner
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    libpq-dev \
-    postgresql-client \
-    unzip && \
+# Instala dependencias del sistema necesarias y sonar-scanner
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        libpq-dev \
+        openjdk-17-jre \
+        postgresql-client \
+        unzip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copia dependencias primero para aprovechar el cache
+# Copia requirements primero (para aprovechar el cache si no cambian)
 COPY requirements.txt .
 
 # Instala dependencias de Python y sonar-scanner
@@ -29,8 +33,8 @@ RUN pip install --upgrade pip && \
     ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && \
     rm sonar-scanner.zip
 
-# Copia el resto del código
+# Copia el resto del proyecto
 COPY . .
 
-# Crea carpeta de estáticos
+# Crea carpeta para archivos estáticos
 RUN mkdir -p /app/staticfiles
