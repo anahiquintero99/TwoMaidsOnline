@@ -16,8 +16,9 @@ services:
         condition: service_started
     environment:
       - DEBUG=1
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/twomaidsonline
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/twomaidsonline
       - REDIS_URL=redis://redis:6379
+      - SONAR_TOKEN=${SONAR_TOKEN}
     env_file:
       - .env
 

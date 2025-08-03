@@ -10,3 +10,4 @@ djangorestframework>=3.14.0
 django-cors-headers>=4.0.0
 whitenoise>=6.5.0
 djangorestframework-api-key>=2.0.0
+coverage

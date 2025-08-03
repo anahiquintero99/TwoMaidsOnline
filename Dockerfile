@@ -1,36 +1,36 @@
-# Usar Python 3.11 como imagen base
 FROM python:3.11-slim
 
-# Variables de entorno para mejorar rendimiento de Python en contenedor
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Evita archivos .pyc y hace flush automático del output
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Establecer directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema necesarias para PostgreSQL y paquetes de Python
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        postgresql-client \
-        build-essential \
-        libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Instala herramientas necesarias y sonar-scanner
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    libpq-dev \
+    postgresql-client \
+    unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copiar archivo de dependencias
+# Copia dependencias primero para aprovechar el cache
 COPY requirements.txt .
 
-# Instalar dependencias de Python
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Instala dependencias de Python y sonar-scanner
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt && \
+    pip install coverage && \
+    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip && \
+    unzip sonar-scanner.zip -d /opt && \
+    mv /opt/sonar-scanner-* /opt/sonar-scanner && \
+    ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && \
+    rm sonar-scanner.zip
 
-# Copiar el resto del proyecto
+# Copia el resto del código
 COPY . .
 
-# Crear carpeta para archivos estáticos
+# Crea carpeta de estáticos
 RUN mkdir -p /app/staticfiles
-
-# Exponer el puerto por defecto de Django
-EXPOSE 8000
-
-# Comando por defecto
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
