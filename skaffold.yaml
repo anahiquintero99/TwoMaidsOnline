@@ -1,0 +1,12 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+build:
+  artifacts:
+    - image: twomaidsonline
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  rawYaml:
+    - k8s-deployment.yaml
+deploy:
+  kubectl: {}
