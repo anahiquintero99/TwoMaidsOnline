@@ -1,0 +1,62 @@
+name: Cloud Code & SonarQube Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-analyze:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: twomaidsonline
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+    - name: 📥 Checkout repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install coverage sonar-scanner
+
+    - name: 🧪 Run Django Tests
+      run: |
+        python manage.py test
+        coverage run --source='.' manage.py test
+        coverage xml
+
+    - name: 🔍 SonarQube Analysis
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=twomaidsonline \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+    - name: ☁️ Cloud Code Deploy (Simulación)
+      run: |
+        echo "Simulando despliegue con Cloud Code..."
+        echo "Aquí se integraría skaffold build --dry-run"
