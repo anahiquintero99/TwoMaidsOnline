@@ -163,6 +163,36 @@ docker-compose exec db pg_dump -U postgres twomaidsonline > backup.sql
 docker-compose exec -T db psql -U postgres -d twomaidsonline < backup.sql
 ```
 
+# Entorno Local Alternativo: Minikube + Skaffold 🧪
+
+Si deseas ejecutar el proyecto dentro de un clúster local con Kubernetes usando Minikube, puedes usar el script `start-dev1.ps1`.
+
+Este entorno es útil para pruebas de CI/CD, integraciones con Cloud Code y SonarQube, y desarrollo avanzado con microservicios.
+
+### ⚙️ Requisitos Previos
+
+- Docker Desktop
+- [Minikube](https://minikube.sigs.k8s.io/docs/)
+- [Skaffold](https://skaffold.dev/docs/)
+- PowerShell en Windows (si estás en Linux/macOS puedes adaptar el script a Bash)
+
+### 📂 Estructura esperada
+
+Asegúrate de tener estos archivos en la raíz del proyecto:
+
+- `skaffold.yaml`
+- `k8s-deployment.yaml`
+- `Dockerfile`
+- `start-dev1.ps1`
+
+### ▶️ Cómo iniciar el entorno con PowerShell
+
+Ejecuta el siguiente comando desde PowerShell:
+
+```powershell
+.\start-dev1.ps1
+
+
 ### 3. Desarrollo
 
 #### Para desarrollo local
